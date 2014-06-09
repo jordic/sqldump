@@ -14,7 +14,7 @@ Simple example dumping one table from a MySQL database
 
 ```go
     // dumping all tables to stdout
-    dumper := MySQLDump{db: db, w: os.Stdout}
+    dumper := sqldump.NewMySQLDump(db, os.Stdout)
     DumpAllTables(dumper)
 
     // dumping just table test structure

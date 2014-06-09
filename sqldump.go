@@ -22,7 +22,7 @@ type SQLDumper interface {
 // MySQLDump is actually, the only dumper released.. perhaps
 // will build new ones on future.
 // to init it, just, create a new type:
-//      dumper := MysqlDump{db:sql.DB, w:io.Writer}
+//      dumper := sqldump.NewMySQLDump(db *db.DB, w io.Writer)
 //  and use it.
 // on apps directory i will build some examples...
 // a commandline tool for downloading databases from server...

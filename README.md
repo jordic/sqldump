@@ -28,3 +28,17 @@ Simple example dumping one table from a MySQL database
 
 ```
 
+## Examples in apps
+
+### webdumper.go 
+Demostrates the use of the dumper as a web dumper..
+
+#### Install:
+go get github.com/jordic/sqldump
+go run apps/webdumper.go
+
+Fires an http server on port :3000, default, shows the form for
+input params... 
+if param action="dowload" as a hidden or get, param... 
+dumps the requested database
+

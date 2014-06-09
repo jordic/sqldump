@@ -32,6 +32,11 @@ type MySQLDump struct {
 	w  io.Writer
 }
 
+// NewMySQLDump returns an instance of the Dumper to use,
+func NewMySQLDump(db *sql.DB, w io.Writer) SQLDumper {
+	return MySQLDump{db: db, w: w}
+}
+
 // GetTables returns the list of tables on the database
 // @todo: return views also
 func (t MySQLDump) GetTables() ([]string, error) {

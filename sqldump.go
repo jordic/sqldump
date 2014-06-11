@@ -130,61 +130,61 @@ func (t MySQLDump) DumpTableData(table string) error {
 	if err != nil {
 		return err
 	}
-	if ct == 0 {
-		fmt.Fprintf(t.w, "\n--Empty table\n")
-		return nil
-	}
 
 	fmt.Fprintf(t.w, "LOCK TABLES `%s` WRITE;\n", table)
 	//var columns []string
-	cols, err := t.GetColumnsFromTable(table)
-	if err != nil {
-		return err
-	}
-	collist := buildColumnList(cols)
-	query := fmt.Sprintf("INSERT INTO `%s` (%s)\nVALUES\n", table, collist)
-	fmt.Fprint(t.w, query)
 
-	rows, derr := t.db.Query(fmt.Sprintf("SELECT * FROM `%s`", table))
-	if derr != nil {
-		return derr
-	}
-
-	columns, err := rows.Columns()
-	if err != nil {
-		return err
-	}
-
-	values := make([]*sql.RawBytes, len(columns))
-	scanArgs := make([]interface{}, len(values))
-	for i := range values {
-		scanArgs[i] = &values[i]
-	}
-
-	var data string
-	for rows.Next() {
-		// if data is present write to Writer
-		if data != "" {
-			fmt.Fprint(t.w, fmt.Sprintf("%s,\n", data))
-		}
-
-		err = rows.Scan(scanArgs...)
+	if ct > 0 {
+		cols, err := t.GetColumnsFromTable(table)
 		if err != nil {
 			return err
 		}
-		var vals []string
-		for _, col := range values {
-			val := "NULL"
-			if col != nil {
-				val = fmt.Sprintf("'%s'", escape(string(*col)))
-			}
-			vals = append(vals, val)
+		collist := buildColumnList(cols)
+		query := fmt.Sprintf("INSERT INTO `%s` (%s) VALUES ", table, collist)
+		fmt.Fprint(t.w, query)
+
+		rows, derr := t.db.Query(fmt.Sprintf("SELECT * FROM `%s`", table))
+		if derr != nil {
+			return derr
 		}
-		// write line to writer
-		data = fmt.Sprintf("( %s )", strings.Join(vals, ", "))
+
+		columns, err := rows.Columns()
+		if err != nil {
+			return err
+		}
+
+		values := make([]*sql.RawBytes, len(columns))
+		scanArgs := make([]interface{}, len(values))
+		for i := range values {
+			scanArgs[i] = &values[i]
+		}
+
+		var data string
+		for rows.Next() {
+			// if data is present write to Writer
+			if data != "" {
+				fmt.Fprint(t.w, fmt.Sprintf("%s,", data))
+			}
+
+			err = rows.Scan(scanArgs...)
+			if err != nil {
+				return err
+			}
+			var vals []string
+			for _, col := range values {
+				val := "NULL"
+				if col != nil {
+					val = fmt.Sprintf("'%s'", escape(string(*col)))
+				}
+				vals = append(vals, val)
+			}
+			// write line to writer
+			data = fmt.Sprintf("(%s)", strings.Join(vals, ","))
+		}
+		// write last row
+		fmt.Fprint(t.w, fmt.Sprintf("%s;\n", data))
 	}
-	// write last row
-	fmt.Fprint(t.w, fmt.Sprintf("%s;\n", data))
+	fmt.Fprint(t.w, "UNLOCK TABLES;\n")
 	return nil
 }
 

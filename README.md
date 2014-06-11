@@ -34,7 +34,7 @@ Simple example dumping one table from a MySQL database
 ## Examples in apps
 
 ### sqldumper.go
-Using a json config file, describing all your databases it can download all of them, or just a portion.
+Using a json config file, describing all your databases it can download all of them, or just one.
 
 Params:
 - config="jsonfile" defaults to sqldumper.json
@@ -50,6 +50,12 @@ JsonFile:
 ```
 Where each key represents a database, and each value, a dsn string for connecting to it
 
+Install:
+
+go get github.com/jordic/sqldump<br/>
+go run apps/sqldumper/sqldumper.go<br/> 
+or
+go build apps/sqldumper/sqldumper.go
 
 ### webdumper.go 
 Demostrates the use of the dumper as a web dumper..

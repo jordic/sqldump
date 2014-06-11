@@ -57,6 +57,9 @@ go run apps/sqldumper/sqldumper.go<br/>
 or
 go build apps/sqldumper/sqldumper.go
 
+Note: I'm actually using this tool to backup my mysql databases. Crosscompiled with gox, and tested
+on linux_amd_64 and osx64
+
 ### webdumper.go 
 Demostrates the use of the dumper as a web dumper..
 

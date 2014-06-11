@@ -39,7 +39,7 @@ Using a json config file, describing all your databases it can download all of t
 Params:
 - config="jsonfile" defaults to sqldumper.json
 - output="directory where to output in format /tmp/"
-- usegz default false, put the flag if want to dump to gzip file
+- gzip default false, put the flag if want to dump to gzip file
 
 JsonFile:
 ```json

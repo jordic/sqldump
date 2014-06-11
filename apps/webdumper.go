@@ -56,6 +56,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 		dumper := sqldump.NewMySQLDump(db, w)
 
 		// dumps create table
+		dumoer.DumpInit()
 		err = dumper.DumpCreateTable(table)
 		if err != nil {
 			fmt.Fprintf(w, "Error dumping database", err)
@@ -67,6 +68,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "Error dumping database", err)
 			return
 		}
+		dumper.DumpEnd()
 
 		return
 

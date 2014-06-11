@@ -17,6 +17,8 @@ type SQLDumper interface {
 	GetColumnsFromTable(table string) ([]string, error)
 	DumpCreateTable(table string) error
 	DumpTableData(table string) error
+	DumpInit()
+	DumpEnd()
 }
 
 // MySQLDump is actually, the only dumper released.. perhaps
@@ -186,6 +188,17 @@ func (t MySQLDump) DumpTableData(table string) error {
 	return nil
 }
 
+// DumpInit adds variables at begining of a dump
+func (t MySQLDump) DumpInit() {
+	fmt.Fprint(t.w, "SET NAMES utf8;\n")
+	fmt.Fprint(t.w, "SET FOREIGN_KEY_CHECKS = 0;\n")
+}
+
+// DumpInit adds variables at the end of a dump
+func (t MySQLDump) DumpEnd() {
+	fmt.Fprint(t.w, "SET FOREIGN_KEY_CHECKS = 1;\n")
+}
+
 func getSelectQueryFor(t MySQLDump, table string) (string, error) {
 	columns, err := t.GetColumnsFromTable(table)
 	if err != nil {
@@ -235,13 +248,14 @@ func escape(str string) string {
 }
 
 // DumpAllTables will dump a database, content and structure to io.Writer
-func DumpAllTables(t MySQLDump) error {
+func DumpAllTables(t SQLDumper) error {
 
 	tables, err := t.GetTables()
 	if err != nil {
 		return err
 	}
 
+	t.DumpInit()
 	for _, table := range tables {
 		err = t.DumpCreateTable(table)
 		if err != nil {
@@ -252,6 +266,7 @@ func DumpAllTables(t MySQLDump) error {
 			return err
 		}
 	}
+	t.DumpEnd()
 
 	return nil
 
